@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://www.xhuan-wang.cn').hostname,
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":false,"style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="一、Sqoop方式（不支持） 1、Sqoop是比较常用的在Hadoop和关系型数据库之间进行数据导入导出的工具，Sqoop1导入导出关系型数据库支持JDBC和direct两种方式，其中direct是通过—direct参数使用相关数据库dump工具进行导入导出，例如mysql的mysqldump和mysqlimport工具，可以更快地向MySQL导入和导出。根据官方文档，Sqoop1支持的关系型数据">
+<meta name="keywords" content="数据采集,mongodb,datax">
+<meta property="og:type" content="website">
+<meta property="og:title" content="MongoDB数据同步">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index.html">
+<meta property="og:site_name" content="xhuan-wang">
+<meta property="og:description" content="一、Sqoop方式（不支持） 1、Sqoop是比较常用的在Hadoop和关系型数据库之间进行数据导入导出的工具，Sqoop1导入导出关系型数据库支持JDBC和direct两种方式，其中direct是通过—direct参数使用相关数据库dump工具进行导入导出，例如mysql的mysqldump和mysqlimport工具，可以更快地向MySQL导入和导出。根据官方文档，Sqoop1支持的关系型数据">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;Users&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;MongoDB数据同步&#x2F;index&#x2F;sqoop-支持的数据库.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;Users&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;MongoDB数据同步&#x2F;index&#x2F;架构设计.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;Users&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;MongoDB数据同步&#x2F;index&#x2F;DataX支持的数据源.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;Users&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;MongoDB数据同步&#x2F;index&#x2F;MongoDB数据.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;Users&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;MongoDB数据同步&#x2F;index&#x2F;DataX运行结果.png">
+<meta property="og:updated_time" content="2020-10-22T19:20:48.522Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;Users&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;MongoDB数据同步&#x2F;index&#x2F;sqoop-支持的数据库.png">
+
+<link rel="canonical" href="https://www.xhuan-wang.cn/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: false,
+    isPage: true,
+    isArchive: false
+  };
+</script>
+
+  <title>MongoDB数据同步 | xhuan-wang
+  </title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="xhuan-wang" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">xhuan-wang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">个人技术博客</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+    
+    
+    
+    <div class="post-block" lang="zh-CN">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">MongoDB数据同步
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h3 id="一、Sqoop方式（不支持）"><a href="#一、Sqoop方式（不支持）" class="headerlink" title="一、Sqoop方式（不支持）"></a>一、Sqoop方式（不支持）</h3><ul>
+<li>1、Sqoop是比较常用的在Hadoop和关系型数据库之间进行数据导入导出的工具，Sqoop1导入导出关系型数据库支持JDBC和direct两种方式，其中direct是通过—direct参数使用相关数据库dump工具进行导入导出，例如mysql的mysqldump和mysqlimport工具，可以更快地向MySQL导入和导出。根据官方文档，Sqoop1支持的关系型数据库以及导入导出的方式如下图所示：</li>
+</ul>
+<p><img src="/Users/wangxiaohuan/wangxiaohuan/source/MongoDB数据同步/index/sqoop-支持的数据库.png" alt="sqoop-支持的数据库"></p>
+<pre><code>可以看出，Sqoop1只支持关系型数据库，其中只对Mysql、Oracle、PostgreSQL支持dump直连方式。
+</code></pre><ul>
+<li>2、根据官方文档，Sqoop2目前并不适用于生产，Sqoop2支持的连接器：FTP Connector、Generic JDBC Connector、 HDFS Connector、Kafka Connector、Kite Connector、SFTP connector，所以Sqoop2同步MongoDB数据的方案不可行。</li>
+</ul>
+<p>总结：综上，Sqoop1不支持非关系型数据与hadoop的数据导入导出，而Sqoop2不适用于生产，且不支持非关系型数据库与Hadoop的数据导入导出。所以，Sqoop不适用于MongoDB与Hadoop之间的数据同步。</p>
+<h3 id="二、MongoDump方式"><a href="#二、MongoDump方式" class="headerlink" title="二、MongoDump方式"></a>二、MongoDump方式</h3><p>mongodump是官方提供的一个对数据库进行逻辑导出的备份工具，导出文件为<strong>BSON</strong>二进制格式，无法使用文本编辑工具直接查看。mongodump可以导出mongod或者mongos实例的数据，从集群模式来看，可以备份单实例、副本集、分片集集群。</p>
+<ul>
+<li><p><strong>1、MongoDump方式：</strong></p>
+<p>下载二进制包到相应目录即可：<a href="https://www.mongodb.com/try/download/database-tools" target="_blank" rel="noopener">MongoDB工具包</a></p>
+<p>简单示例：</p>
+<p>使用mongodump导出bson二进制文件，bsondump再用bsondump转成json文件，再put到HDFS上</p>
+<p>全量：</p>
+<p>1.1、导出bson文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">mongodump -h localhost:27017 -d test -c runoob -o C:\Users\xiaohuan.wang\Desktop</span></pre></td></tr></table></figure>
+<p>1.2、转成json文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">bsondump C:\Users\xiaohuan.wang\Desktop\test\runoob.bson &gt; C:\Users\xiaohuan.wang\Desktop\dump_test_all.json</span></pre></td></tr></table></figure>
+<p>1.3、load到hive临时表</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">hive -e "truncate table schema_name.table_name;" hive -e "load data local inpath '$mongodb_data_path/article_inc.json' overwrite into table schema_name.table_name;"</span></pre></td></tr></table></figure>
+<p>增量：</p>
+<p>使用-q参数对日期或者相关字段进行条件过滤增量导出文件。</p>
+</li>
+</ul>
+<p>  Mongodump使用go写的，大量使用了goroutine，远程备份猜测是通过TCP/IP协议连接的，没有太多研究，具体可参考：</p>
+<p>  <a href="https://blog.csdn.net/weixin_34190136/article/details/90625259" target="_blank" rel="noopener">https://blog.csdn.net/weixin_34190136/article/details/90625259</a></p>
+<p>  <a href="https://engineering.mongodb.com/post/multiplexing-golang-channels-to-maximize-throughput/" target="_blank" rel="noopener">https://engineering.mongodb.com/post/multiplexing-golang-channels-to-maximize-throughput/</a></p>
+<ul>
+<li><p><strong>2、mongoexport方式：</strong></p>
+<p>2.1、导出json文件</p>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">mongoexport -h localhost:27017 -d test -c runoob --fields title,description,by,url,tags,likes --type json -o C:\Users\xiaohuan.wang\Desktop\test_all.json</span></pre></td></tr></table></figure>
+<pre><code>  2.2、load到hive临时表
+</code></pre><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">hive -e "truncate table schema_name.table_name;" hive -e "load data local inpath '$mongodb_data_path/article_inc.json' overwrite into table schema_name.table_name;"</span></pre></td></tr></table></figure>
+<p>总结：</p>
+<ul>
+<li><p>1、对于MongoDB实例的逻辑备份工具，mongodump是个不二选择，官方出品，安全稳定性有保障；</p>
+</li>
+<li><p>2、mongodump较适合数据量较小的备份，相对于数据量较大的情况，备份效率不是太高；</p>
+</li>
+<li><p>3、mongodump导出时比较消耗服务器性能，而且不支持同时导出多个库。</p>
+</li>
+<li><p>4、只需要下载MongoDB官方提供的工具包到大数据集群Client节点即可，不需要部署MongoDB Server、Client等服务。</p>
+</li>
+</ul>
+<h3 id="三、DataX"><a href="#三、DataX" class="headerlink" title="三、DataX"></a>三、DataX</h3><p>DataX是一个异构数据源离线同步工具，致力于实现关系型数据库、HDFS、Hive、HBase、MongoDB等各种异构数据源之间的数据同步功能。DataX将复杂的网状的同步链路变成了星型数据链路，DataX作为中间传输载体负责连接各种数据源。当需要接入一个新的数据源的时候，只需要将此数据源对接到DataX，便能跟已有的数据源做到无缝数据同步。</p>
+<ul>
+<li>1、DataX架构图：</li>
+</ul>
+<p><img src="/Users/wangxiaohuan/wangxiaohuan/source/MongoDB数据同步/index/架构设计.png" alt="架构设计"></p>
+<pre><code>DataX本身作为离线数据同步框架，采用Framework + plugin架构构建。将数据源读取和写入抽象成为Reader/Writer插件，纳入到整个同步框架中。
+</code></pre><ul>
+<li><strong>Reader</strong>：Reader为数据采集模块，负责采集数据源的数据，将数据发送给Framework。</li>
+<li><strong>Writer</strong>： Writer为数据写入模块，负责不断向Framework取数据，并将数据写入到目的端。</li>
+<li><p><strong>Framework</strong>：Framework用于连接reader和writer，作为两者的数据传输通道，并处理缓冲，流控，并发，数据转换等核心技术问题。</p>
+</li>
+<li><p>2、DataX目前支持的数据源：</p>
+</li>
+</ul>
+<p><img src="/Users/wangxiaohuan/wangxiaohuan/source/MongoDB数据同步/index/DataX支持的数据源.png" alt="DataX支持的数据源"></p>
+<ul>
+<li><p>3、DataX部署（开源版本不支持集群部署）</p>
+<p>环境要求：</p>
+<ul>
+<li>Linux</li>
+<li><a href="http://www.oracle.com/technetwork/cn/java/javase/downloads/index.html" target="_blank" rel="noopener">JDK(1.8以上，推荐1.8)</a></li>
+<li><a href="https://www.python.org/downloads/" target="_blank" rel="noopener">Python(推荐Python2.6.X)</a></li>
+<li><a href="https://maven.apache.org/download.cgi" target="_blank" rel="noopener">Apache Maven 3.x</a> (Compile DataX)</li>
+</ul>
+<p>直接下载DataX工具包：<a href="http://datax-opensource.oss-cn-hangzhou.aliyuncs.com/datax.tar.gz" target="_blank" rel="noopener">DataX下载地址</a>，下载后解压至本地某个目录，进入bin目录，即可运行同步作业：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">$ cd  &#123;YOUR_DATAX_HOME&#125;&#x2F;bin</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">$ python datax.py &#123;YOUR_JOB.json&#125;</span></pre></td></tr></table></figure>
+</li>
+<li><p>4、MongoDB数据同步简单测试</p>
+<p>全量：</p>
+<ul>
+<li><p>4.1、在MongoDB中插入如下数据：</p>
+<p><img src="/Users/wangxiaohuan/wangxiaohuan/source/MongoDB数据同步/index/MongoDB数据.png" alt="MongoDB数据"></p>
+</li>
+<li><p>4.2、在Hive中建表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> orc_table(</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">title  <span class="keyword">STRING</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">description  <span class="keyword">STRING</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">bys  <span class="keyword">STRING</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">url</span>  <span class="keyword">STRING</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line">likes  <span class="keyword">STRING</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">)</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">ROW</span> <span class="keyword">FORMAT</span> <span class="keyword">DELIMITED</span> <span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">'\t'</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">STORED</span> <span class="keyword">AS</span> ORC;</span></pre></td></tr></table></figure>
+</li>
+<li><p>4.3、编辑json文件</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">  &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">      <span class="attr">"job"</span>: &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">          <span class="attr">"setting"</span>: &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">              <span class="attr">"speed"</span>: &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line">                  <span class="attr">"byte"</span>:<span class="number">10485760</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line">              &#125;,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">              <span class="attr">"errorLimit"</span>: &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">                  <span class="attr">"record"</span>: <span class="number">0</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">                  <span class="attr">"percentage"</span>: <span class="number">0.02</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line">              &#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line">          &#125;,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line">          <span class="attr">"content"</span>: [</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line">              &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line">                  <span class="attr">"reader"</span>: &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line">                      <span class="attr">"name"</span>: <span class="string">"mongodbreader"</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">16</span></pre></td><td class="code"><pre><span class="line">                      <span class="attr">"parameter"</span>: &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">17</span></pre></td><td class="code"><pre><span class="line">  						<span class="attr">"address"</span>: [<span class="string">"localhost:27017"</span>],</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">18</span></pre></td><td class="code"><pre><span class="line">  						<span class="attr">"userName"</span>: <span class="string">""</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">19</span></pre></td><td class="code"><pre><span class="line">  						<span class="attr">"userPassword"</span>: <span class="string">""</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">20</span></pre></td><td class="code"><pre><span class="line">  						<span class="attr">"dbName"</span>: <span class="string">"test"</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">21</span></pre></td><td class="code"><pre><span class="line">  						<span class="attr">"collectionName"</span>: <span class="string">"runoob"</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">22</span></pre></td><td class="code"><pre><span class="line">                          <span class="attr">"column"</span> : [</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">23</span></pre></td><td class="code"><pre><span class="line">                              &#123;<span class="attr">"name"</span>: <span class="string">"title"</span>,<span class="attr">"type"</span>: <span class="string">"string"</span>&#125;,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">24</span></pre></td><td class="code"><pre><span class="line">                              &#123;<span class="attr">"name"</span>: <span class="string">"description"</span>,<span class="attr">"type"</span>: <span class="string">"string"</span>&#125;,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">25</span></pre></td><td class="code"><pre><span class="line">  						  &#123;<span class="attr">"name"</span>: <span class="string">"bys"</span>,<span class="attr">"type"</span>: <span class="string">"string"</span>&#125;,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">26</span></pre></td><td class="code"><pre><span class="line">                              &#123;<span class="attr">"name"</span>: <span class="string">"url"</span>,<span class="attr">"type"</span>: <span class="string">"string"</span>&#125;,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">27</span></pre></td><td class="code"><pre><span class="line">                              &#123;<span class="attr">"name"</span>: <span class="string">"likes"</span>,<span class="attr">"type"</span>: <span class="string">"long"</span>&#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">28</span></pre></td><td class="code"><pre><span class="line">                          ],</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">29</span></pre></td><td class="code"><pre><span class="line">                          <span class="attr">"sliceRecordCount"</span>: <span class="number">100000</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">30</span></pre></td><td class="code"><pre><span class="line">                      &#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">31</span></pre></td><td class="code"><pre><span class="line">                  &#125;,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">32</span></pre></td><td class="code"><pre><span class="line">  				<span class="attr">"writer"</span>: &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">33</span></pre></td><td class="code"><pre><span class="line">                      <span class="attr">"name"</span>: <span class="string">"hdfswriter"</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">34</span></pre></td><td class="code"><pre><span class="line">                      <span class="attr">"parameter"</span>: &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">35</span></pre></td><td class="code"><pre><span class="line">                          <span class="attr">"defaultFS"</span>: <span class="string">"hdfs://localhost:9000"</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">36</span></pre></td><td class="code"><pre><span class="line">                          <span class="attr">"fileType"</span>: <span class="string">"orc"</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">37</span></pre></td><td class="code"><pre><span class="line">                          <span class="attr">"path"</span>: <span class="string">"/user/hive/warehouse/tmp.db/orc_table"</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">38</span></pre></td><td class="code"><pre><span class="line">                          <span class="attr">"fileName"</span>: <span class="string">"test"</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">39</span></pre></td><td class="code"><pre><span class="line">                          <span class="attr">"column"</span>: [</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">40</span></pre></td><td class="code"><pre><span class="line">                              &#123;<span class="attr">"name"</span>: <span class="string">"title"</span>,<span class="attr">"type"</span>: <span class="string">"STRING"</span>&#125;,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">41</span></pre></td><td class="code"><pre><span class="line">                              &#123;<span class="attr">"name"</span>: <span class="string">"description"</span>,<span class="attr">"type"</span>: <span class="string">"STRING"</span>&#125;,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">42</span></pre></td><td class="code"><pre><span class="line">  						  &#123;<span class="attr">"name"</span>: <span class="string">"bys"</span>,<span class="attr">"type"</span>: <span class="string">"STRING"</span>&#125;,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">43</span></pre></td><td class="code"><pre><span class="line">                              &#123;<span class="attr">"name"</span>: <span class="string">"url"</span>,<span class="attr">"type"</span>: <span class="string">"STRING"</span>&#125;,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">44</span></pre></td><td class="code"><pre><span class="line">                              &#123;<span class="attr">"name"</span>: <span class="string">"likes"</span>,<span class="attr">"type"</span>: <span class="string">"TINYINT"</span>&#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">45</span></pre></td><td class="code"><pre><span class="line">                          ],</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">46</span></pre></td><td class="code"><pre><span class="line">                          <span class="attr">"writeMode"</span>: <span class="string">"append"</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">47</span></pre></td><td class="code"><pre><span class="line">                          <span class="attr">"fieldDelimiter"</span>: <span class="string">"\t"</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">48</span></pre></td><td class="code"><pre><span class="line">                        <span class="attr">"compress"</span>:<span class="string">"NONE"</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">49</span></pre></td><td class="code"><pre><span class="line">                      &#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">50</span></pre></td><td class="code"><pre><span class="line">                &#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">51</span></pre></td><td class="code"><pre><span class="line">              &#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">52</span></pre></td><td class="code"><pre><span class="line">          ]</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">53</span></pre></td><td class="code"><pre><span class="line">      &#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">54</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr></table></figure>
+</li>
+<li><p>4.4、在DataX安装目录下，执行脚本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">python2 datax.py ../job/mongo2mysql.json</span></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>运行结果：</p>
+<p><img src="/Users/wangxiaohuan/wangxiaohuan/source/MongoDB数据同步/index/DataX运行结果.png" alt="DataX运行结果"></p>
+<p>可以看到4条记录从MongoDB里读取出来，写入到Hive失败记录数为0，但是我去查Hive的时候，Hive中并没有数据，我猜测是我本地的Hive是最新版本的3.3，而看源码得知DataX中编译时支持的是1.1.1版本。因为前面读取MongoDB的时候，因为我本地装的是最新版本的4.4，而DataX的MongoDBReader中读取MongoDB的Java包支持到3.2版本，所以一直没法读取出MongoDB的数据。后面升级MongoDB的依赖包以及重装4.2版本的MongoDB才读取出了数据。所以猜测应该是同样的问题，DataX因为很久没有更新的缘故，对最新版本的相关数据源是有问题的，需要下载源码改动相关代码重新编译才能够完好的支持新版本相关的组件。</p>
+</li>
+</ul>
+<p>  增量：</p>
+<p>  通过reader里添加—query参数设置过滤条件实现增量同步</p>
+<p>总结：</p>
+<p>1、开源版本DataX不支持集群部署模式，且社区不活跃。</p>
+<p>2、只需在Client节点解压安装包，写Reader和Writer json格式的任务文件即可运行。</p>
+<p>3、使用DataX，就要维护两套数据同步任务，工作量增加。</p>
+<h3 id="四、其他方式"><a href="#四、其他方式" class="headerlink" title="四、其他方式"></a>四、其他方式</h3><ul>
+<li><p>1、<a href="https://www.mongodb.com/products/spark-connector" target="_blank" rel="noopener">MongoDB Connector for Spark</a></p>
+<p>MongoDB Connector for Spark提供MongoDB和Spark之间的集成，可以通过Spark连接MongoDB读取相关数据，再讲数据写到Hive。</p>
+<p>参考：<a href="https://docs.mongodb.com/spark-connector/master/" target="_blank" rel="noopener">https://docs.mongodb.com/spark-connector/master/</a></p>
+<p>示例：</p>
+<p>添加依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mongodb.spark<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mongo-spark-connector_2.11<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.4.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.spark<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spark-core_2.11<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.4.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.spark<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spark-sql_2.11<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.4.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">16</span></pre></td><td class="code"><pre><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">17</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span></pre></td></tr></table></figure>
+<p>读取数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.mongodb.spark_examples;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.api.java.JavaSparkContext;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.SparkSession;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.bson.Document;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.mongodb.spark.MongoSpark;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.mongodb.spark.rdd.api.java.JavaMongoRDD;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadFromMongoDB</span> </span>&#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">final</span> String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line">    SparkSession spark = SparkSession.builder()</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line">      .master(<span class="string">"local"</span>)</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">16</span></pre></td><td class="code"><pre><span class="line">      .appName(<span class="string">"MongoSparkConnectorIntro"</span>)</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">17</span></pre></td><td class="code"><pre><span class="line">      .config(<span class="string">"spark.mongodb.input.uri"</span>, <span class="string">"mongodb://127.0.0.1/test.myCollection"</span>)</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">18</span></pre></td><td class="code"><pre><span class="line">      .config(<span class="string">"spark.mongodb.output.uri"</span>, <span class="string">"mongodb://127.0.0.1/test.myCollection"</span>)</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">19</span></pre></td><td class="code"><pre><span class="line">      .getOrCreate();</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">20</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">21</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">// Create a JavaSparkContext using the SparkSession's SparkContext object</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">22</span></pre></td><td class="code"><pre><span class="line">    JavaSparkContext jsc = <span class="keyword">new</span> JavaSparkContext(spark.sparkContext());</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">23</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">24</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">/*Start Example: Read data from MongoDB************************/</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">25</span></pre></td><td class="code"><pre><span class="line">    JavaMongoRDD&lt;Document&gt; rdd = MongoSpark.load(jsc);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">26</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">/*End Example**************************************************/</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">27</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">28</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">// Analyze data from MongoDB</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">29</span></pre></td><td class="code"><pre><span class="line">    System.out.println(rdd.count());</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">30</span></pre></td><td class="code"><pre><span class="line">    System.out.println(rdd.first().toJson());</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">31</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">32</span></pre></td><td class="code"><pre><span class="line">    jsc.close();</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">33</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">34</span></pre></td><td class="code"><pre><span class="line">  &#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">35</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr></table></figure>
+</li>
+<li><p>2、Flink DataSet 读取MongoDB</p>
+<p>参考：<a href="https://github.com/okkam-it/flink-mongodb-test" target="_blank" rel="noopener">https://github.com/okkam-it/flink-mongodb-test</a></p>
+<p>添加依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.hadoop<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hadoop-common<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;hadoop.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.flink<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>flink-hadoop-compatibility<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;flink.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.flink<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>flink-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;flink.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">16</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">17</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.flink<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">18</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>flink-clients<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">19</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;flink.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">20</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">21</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">22</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">23</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">24</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mongodb<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">25</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mongo-hadoop-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">26</span></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;mongodb.hadoop.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">27</span></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span></pre></td></tr></table></figure>
+<p>读取数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.okkam.flink.mongodb.test;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.functions.MapFunction;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.DataSet;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.ExecutionEnvironment;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.tuple.Tuple2;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.flink.hadoopcompatibility.mapred.HadoopInputFormat;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapred.JobConf;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.bson.BSONObject;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.mongodb.BasicDBObject;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.mongodb.hadoop.io.BSONWritable;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.mongodb.hadoop.mapred.MongoInputFormat;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MongodbExample</span> </span>&#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">16</span></pre></td><td class="code"><pre><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">17</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">18</span></pre></td><td class="code"><pre><span class="line">		<span class="comment">// set up the execution environment</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">19</span></pre></td><td class="code"><pre><span class="line">		<span class="keyword">final</span> ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">20</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">21</span></pre></td><td class="code"><pre><span class="line">		<span class="comment">// create a MongodbInputFormat, using a Hadoop input format wrapper</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">22</span></pre></td><td class="code"><pre><span class="line">		HadoopInputFormat&lt;BSONWritable, BSONWritable&gt; hdIf = </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">23</span></pre></td><td class="code"><pre><span class="line">				<span class="keyword">new</span> HadoopInputFormat&lt;BSONWritable, BSONWritable&gt;(<span class="keyword">new</span> MongoInputFormat(),</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">24</span></pre></td><td class="code"><pre><span class="line">						BSONWritable<span class="class">.<span class="keyword">class</span>, <span class="title">BSONWritable</span>.<span class="title">class</span>,	<span class="title">new</span> <span class="title">JobConf</span>())</span>;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">25</span></pre></td><td class="code"><pre><span class="line">	</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">26</span></pre></td><td class="code"><pre><span class="line">		<span class="comment">// specify connection parameters</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">27</span></pre></td><td class="code"><pre><span class="line">		hdIf.getJobConf().set(<span class="string">"mongo.input.uri"</span>, </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">28</span></pre></td><td class="code"><pre><span class="line">				<span class="string">"mongodb://localhost:27017/dbname.collectioname"</span>);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">29</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">30</span></pre></td><td class="code"><pre><span class="line">		DataSet&lt;Tuple2&lt;BSONWritable, BSONWritable&gt;&gt; input = env.createInput(hdIf);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">31</span></pre></td><td class="code"><pre><span class="line">		<span class="comment">// a little example how to use the data in a mapper.</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">32</span></pre></td><td class="code"><pre><span class="line">		DataSet&lt;Tuple2&lt; Text, BSONWritable&gt;&gt; fin = input.map(</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">33</span></pre></td><td class="code"><pre><span class="line">				<span class="keyword">new</span> MapFunction&lt;Tuple2&lt;BSONWritable, BSONWritable&gt;, </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">34</span></pre></td><td class="code"><pre><span class="line">									Tuple2&lt;Text,BSONWritable&gt; &gt;() &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">35</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">36</span></pre></td><td class="code"><pre><span class="line">					<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">37</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">38</span></pre></td><td class="code"><pre><span class="line">					<span class="meta">@Override</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">39</span></pre></td><td class="code"><pre><span class="line">					<span class="function"><span class="keyword">public</span> Tuple2&lt;Text,BSONWritable&gt; <span class="title">map</span><span class="params">(</span></span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">40</span></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="params">							Tuple2&lt;BSONWritable, BSONWritable&gt; record)</span> <span class="keyword">throws</span> Exception </span>&#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">41</span></pre></td><td class="code"><pre><span class="line">						BSONWritable value = record.getField(<span class="number">1</span>);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">42</span></pre></td><td class="code"><pre><span class="line">						BSONObject doc = value.getDoc();</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">43</span></pre></td><td class="code"><pre><span class="line">						BasicDBObject jsonld = (BasicDBObject) doc.get(<span class="string">"jsonld"</span>);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">44</span></pre></td><td class="code"><pre><span class="line">						</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">45</span></pre></td><td class="code"><pre><span class="line">						String id = jsonld.getString(<span class="string">"@id"</span>);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">46</span></pre></td><td class="code"><pre><span class="line">						DBObject builder = BasicDBObjectBuilder.start()</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">47</span></pre></td><td class="code"><pre><span class="line">				                .add(<span class="string">"id"</span>, id)</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">48</span></pre></td><td class="code"><pre><span class="line">				                .add(<span class="string">"type"</span>, jsonld.getString(<span class="string">"@type"</span>))</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">49</span></pre></td><td class="code"><pre><span class="line">				                .get();</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">50</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">51</span></pre></td><td class="code"><pre><span class="line">				        BSONWritable w = <span class="keyword">new</span> BSONWritable(builder);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">52</span></pre></td><td class="code"><pre><span class="line">		                <span class="keyword">return</span> <span class="keyword">new</span> Tuple2&lt;Text,BSONWritable&gt;(<span class="keyword">new</span> Text(id), w);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">53</span></pre></td><td class="code"><pre><span class="line">					&#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">54</span></pre></td><td class="code"><pre><span class="line">				&#125;);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">55</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">56</span></pre></td><td class="code"><pre><span class="line">		<span class="comment">// emit result (this works only locally)</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">57</span></pre></td><td class="code"><pre><span class="line"><span class="comment">//		fin.print();</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">58</span></pre></td><td class="code"><pre><span class="line">		</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">59</span></pre></td><td class="code"><pre><span class="line">		MongoConfigUtil.setOutputURI( hdIf.getJobConf(), </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">60</span></pre></td><td class="code"><pre><span class="line">				<span class="string">"mongodb://localhost:27017/test.testData"</span>);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">61</span></pre></td><td class="code"><pre><span class="line">		<span class="comment">// emit result (this works only locally)</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">62</span></pre></td><td class="code"><pre><span class="line">		fin.output(<span class="keyword">new</span> HadoopOutputFormat&lt;Text,BSONWritable&gt;(</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">63</span></pre></td><td class="code"><pre><span class="line">				<span class="keyword">new</span> MongoOutputFormat&lt;Text,BSONWritable&gt;(), hdIf.getJobConf()));</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">64</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">65</span></pre></td><td class="code"><pre><span class="line">		<span class="comment">// execute program</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">66</span></pre></td><td class="code"><pre><span class="line">		env.execute(<span class="string">"Mongodb Example"</span>);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">67</span></pre></td><td class="code"><pre><span class="line">	&#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">68</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h3><p>通过调研，确定Sqoop不适用于MongoDB的数据集成，其中可行的方案有MongoDB Dump方式、DataX、以及通过现有的计算框架连接读取，目前以上的方案都没有做具体的测试，生产中使用需要根据具体的情况做相应的测试。</p>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、Sqoop方式（不支持）"><span class="nav-number">1.</span> <span class="nav-text">一、Sqoop方式（不支持）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、MongoDump方式"><span class="nav-number">2.</span> <span class="nav-text">二、MongoDump方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、DataX"><span class="nav-number">3.</span> <span class="nav-text">三、DataX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、其他方式"><span class="nav-number">4.</span> <span class="nav-text">四、其他方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、总结"><span class="nav-number">5.</span> <span class="nav-text">五、总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="xhuan-wang"
+      src="/images/favicon.ico">
+  <p class="site-author-name" itemprop="name">xhuan-wang</p>
+  <div class="site-description" itemprop="description">主要涉及Spark、Flink等大数据相关技术。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xhuan-wang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.0.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.6.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '1ce61729dbe4bdf39608',
+      clientSecret: '185b55da4169ba3aafcec16cdba10555c81a7160',
+      repo: 'xhuan-wang.github.io',
+      owner: 'xhuan-wang',
+      admin: ['xhuan-wang'],
+      id: '730f655b7764969d287d3d885e4e89db',
+        language: 'zh-CN',
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>
