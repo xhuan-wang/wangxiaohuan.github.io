@@ -45,13 +45,13 @@
   };
 </script>
 
-  <meta name="description" content="一、API抽象级别Flink提供不同的API抽象级别进行批&#x2F;流应用程序开发，如图（来源于官网）   最低级别的抽象仅提供处理有状态流，通过Process Function嵌入到DataStream API中。它允许用户自由的处理来自于一个或多个流中的事件，并且使用一致的容错状态。另外，用户可以注册事件事件和处理事件回调，从而使程序可以处理复杂的计算。  在实际应用中，大多数应用程序并不需要上述的低">
+  <meta name="description" content="一、API抽象级别Flink提供不同的API抽象级别进行批&#x2F;流应用程序开发，如图（来源于官网）">
 <meta name="keywords" content="Flink">
 <meta property="og:type" content="article">
 <meta property="og:title" content="1、Flink编程模型">
 <meta property="og:url" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;1%E3%80%81Flink%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B&#x2F;index.html">
 <meta property="og:site_name" content="xhuan-wang">
-<meta property="og:description" content="一、API抽象级别Flink提供不同的API抽象级别进行批&#x2F;流应用程序开发，如图（来源于官网）   最低级别的抽象仅提供处理有状态流，通过Process Function嵌入到DataStream API中。它允许用户自由的处理来自于一个或多个流中的事件，并且使用一致的容错状态。另外，用户可以注册事件事件和处理事件回调，从而使程序可以处理复杂的计算。  在实际应用中，大多数应用程序并不需要上述的低">
+<meta property="og:description" content="一、API抽象级别Flink提供不同的API抽象级别进行批&#x2F;流应用程序开发，如图（来源于官网）">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;1%E3%80%81Flink%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B&#x2F;Flink-API抽象级别.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;1%E3%80%81Flink%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B&#x2F;Flink编程模型.png">
@@ -59,7 +59,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;1%E3%80%81Flink%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B&#x2F;窗口类型.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;1%E3%80%81Flink%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B&#x2F;时间类型.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;1%E3%80%81Flink%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B&#x2F;有状态操作.png">
-<meta property="og:updated_time" content="2020-10-22T22:32:02.283Z">
+<meta property="og:updated_time" content="2020-10-22T22:33:39.757Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;1%E3%80%81Flink%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B&#x2F;Flink-API抽象级别.png">
 
@@ -238,7 +238,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-10-23 06:23:18 / 修改时间：06:32:02" itemprop="dateCreated datePublished" datetime="2020-10-23T06:23:18+08:00">2020-10-23</time>
+              <time title="创建时间：2020-10-23 06:23:18 / 修改时间：06:33:39" itemprop="dateCreated datePublished" datetime="2020-10-23T06:23:18+08:00">2020-10-23</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -272,6 +272,7 @@
       
         <h3 id="一、API抽象级别"><a href="#一、API抽象级别" class="headerlink" title="一、API抽象级别"></a>一、API抽象级别</h3><p>Flink提供不同的API抽象级别进行批/流应用程序开发，如图（来源于官网）</p>
 <p><img src="/2020/10/23/1%E3%80%81Flink%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/Flink-API抽象级别.png" alt="Flink-API抽象级别"></p>
+<a id="more"></a>
 <ul>
 <li><p>最低级别的抽象仅提供处理有状态流，通过Process Function嵌入到DataStream API中。它允许用户自由的处理来自于一个或多个流中的事件，并且使用一致的容错状态。另外，用户可以注册事件事件和处理事件回调，从而使程序可以处理复杂的计算。</p>
 </li>

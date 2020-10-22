@@ -5,6 +5,7 @@
     <url>/2020/10/23/1%E3%80%81Flink%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/</url>
     <content><![CDATA[<h3 id="一、API抽象级别"><a href="#一、API抽象级别" class="headerlink" title="一、API抽象级别"></a>一、API抽象级别</h3><p>Flink提供不同的API抽象级别进行批/流应用程序开发，如图（来源于官网）</p>
 <p><img src="/2020/10/23/1%E3%80%81Flink%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B/Flink-API抽象级别.png" alt="Flink-API抽象级别"></p>
+<a id="more"></a>
 <ul>
 <li><p>最低级别的抽象仅提供处理有状态流，通过Process Function嵌入到DataStream API中。它允许用户自由的处理来自于一个或多个流中的事件，并且使用一致的容错状态。另外，用户可以注册事件事件和处理事件回调，从而使程序可以处理复杂的计算。</p>
 </li>
