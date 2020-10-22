@@ -53,14 +53,14 @@
 <meta property="og:site_name" content="xhuan-wang">
 <meta property="og:description" content="一、Sqoop方式（不支持） 1、Sqoop是比较常用的在Hadoop和关系型数据库之间进行数据导入导出的工具，Sqoop1导入导出关系型数据库支持JDBC和direct两种方式，其中direct是通过—direct参数使用相关数据库dump工具进行导入导出，例如mysql的mysqldump和mysqlimport工具，可以更快地向MySQL导入和导出。根据官方文档，Sqoop1支持的关系型数据">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;_posts&#x2F;MongoDB同步数据&#x2F;index&#x2F;sqoop-支持的数据库.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;_posts&#x2F;MongoDB同步数据&#x2F;index&#x2F;架构设计.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;_posts&#x2F;MongoDB同步数据&#x2F;index&#x2F;DataX支持的数据源.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;_posts&#x2F;MongoDB同步数据&#x2F;index&#x2F;MongoDB数据.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;_posts&#x2F;MongoDB同步数据&#x2F;index&#x2F;DataX运行结果.png">
-<meta property="og:updated_time" content="2020-10-22T20:05:14.485Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;sqoop-支持的数据库.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;架构设计.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;DataX支持的数据源.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;MongoDB数据.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;DataX运行结果.png">
+<meta property="og:updated_time" content="2020-10-22T20:15:42.844Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;wangxiaohuan&#x2F;wangxiaohuan&#x2F;source&#x2F;_posts&#x2F;MongoDB同步数据&#x2F;index&#x2F;sqoop-支持的数据库.png">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;www.xhuan-wang.cn&#x2F;2020&#x2F;10&#x2F;23&#x2F;MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE&#x2F;index&#x2F;sqoop-支持的数据库.png">
 
 <link rel="canonical" href="https://www.xhuan-wang.cn/2020/10/23/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/index/">
 
@@ -237,7 +237,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-10-23 01:49:53 / 修改时间：04:05:14" itemprop="dateCreated datePublished" datetime="2020-10-23T01:49:53+08:00">2020-10-23</time>
+              <time title="创建时间：2020-10-23 01:49:53 / 修改时间：04:15:42" itemprop="dateCreated datePublished" datetime="2020-10-23T01:49:53+08:00">2020-10-23</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -265,7 +265,7 @@
         <h3 id="一、Sqoop方式（不支持）"><a href="#一、Sqoop方式（不支持）" class="headerlink" title="一、Sqoop方式（不支持）"></a>一、Sqoop方式（不支持）</h3><ul>
 <li>1、Sqoop是比较常用的在Hadoop和关系型数据库之间进行数据导入导出的工具，Sqoop1导入导出关系型数据库支持JDBC和direct两种方式，其中direct是通过—direct参数使用相关数据库dump工具进行导入导出，例如mysql的mysqldump和mysqlimport工具，可以更快地向MySQL导入和导出。根据官方文档，Sqoop1支持的关系型数据库以及导入导出的方式如下图所示：</li>
 </ul>
-<p><img src="/2020/10/23/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/index/wangxiaohuan/wangxiaohuan/source/_posts/MongoDB同步数据/index/sqoop-支持的数据库.png" alt="sqoop-支持的数据库"></p>
+<p><img src="/2020/10/23/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/index/sqoop-支持的数据库.png" alt="sqoop-支持的数据库"></p>
 <pre><code>可以看出，Sqoop1只支持关系型数据库，其中只对Mysql、Oracle、PostgreSQL支持dump直连方式。
 </code></pre><ul>
 <li>2、根据官方文档，Sqoop2目前并不适用于生产，Sqoop2支持的连接器：FTP Connector、Generic JDBC Connector、 HDFS Connector、Kafka Connector、Kite Connector、SFTP connector，所以Sqoop2同步MongoDB数据的方案不可行。</li>
@@ -314,7 +314,7 @@
 <ul>
 <li>1、DataX架构图：</li>
 </ul>
-<p><img src="/2020/10/23/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/index/wangxiaohuan/wangxiaohuan/source/_posts/MongoDB同步数据/index/架构设计.png" alt="架构设计"></p>
+<p><img src="/2020/10/23/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/index/架构设计.png" alt="架构设计"></p>
 <pre><code>DataX本身作为离线数据同步框架，采用Framework + plugin架构构建。将数据源读取和写入抽象成为Reader/Writer插件，纳入到整个同步框架中。
 </code></pre><ul>
 <li><strong>Reader</strong>：Reader为数据采集模块，负责采集数据源的数据，将数据发送给Framework。</li>
@@ -324,7 +324,7 @@
 <li><p>2、DataX目前支持的数据源：</p>
 </li>
 </ul>
-<p><img src="/2020/10/23/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/index/wangxiaohuan/wangxiaohuan/source/_posts/MongoDB同步数据/index/DataX支持的数据源.png" alt="DataX支持的数据源"></p>
+<p><img src="/2020/10/23/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/index/DataX支持的数据源.png" alt="DataX支持的数据源"></p>
 <ul>
 <li><p>3、DataX部署（开源版本不支持集群部署）</p>
 <p>环境要求：</p>
@@ -341,7 +341,7 @@
 <p>全量：</p>
 <ul>
 <li><p>4.1、在MongoDB中插入如下数据：</p>
-<p><img src="/2020/10/23/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/index/wangxiaohuan/wangxiaohuan/source/_posts/MongoDB同步数据/index/MongoDB数据.png" alt="MongoDB数据"></p>
+<p><img src="/2020/10/23/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/index/MongoDB数据.png" alt="MongoDB数据"></p>
 </li>
 <li><p>4.2、在Hive中建表：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> orc_table(</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">title  <span class="keyword">STRING</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">description  <span class="keyword">STRING</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">bys  <span class="keyword">STRING</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">url</span>  <span class="keyword">STRING</span>,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line">likes  <span class="keyword">STRING</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">)</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">ROW</span> <span class="keyword">FORMAT</span> <span class="keyword">DELIMITED</span> <span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">'\t'</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">STORED</span> <span class="keyword">AS</span> ORC;</span></pre></td></tr></table></figure>
@@ -354,7 +354,7 @@
 </li>
 </ul>
 <p>运行结果：</p>
-<p><img src="/2020/10/23/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/index/wangxiaohuan/wangxiaohuan/source/_posts/MongoDB同步数据/index/DataX运行结果.png" alt="DataX运行结果"></p>
+<p><img src="/2020/10/23/MongoDB%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE/index/DataX运行结果.png" alt="DataX运行结果"></p>
 <p>可以看到4条记录从MongoDB里读取出来，写入到Hive失败记录数为0，但是我去查Hive的时候，Hive中并没有数据，我猜测是我本地的Hive是最新版本的3.3，而看源码得知DataX中编译时支持的是1.1.1版本。因为前面读取MongoDB的时候，因为我本地装的是最新版本的4.4，而DataX的MongoDBReader中读取MongoDB的Java包支持到3.2版本，所以一直没法读取出MongoDB的数据。后面升级MongoDB的依赖包以及重装4.2版本的MongoDB才读取出了数据。所以猜测应该是同样的问题，DataX因为很久没有更新的缘故，对最新版本的相关数据源是有问题的，需要下载源码改动相关代码重新编译才能够完好的支持新版本相关的组件。</p>
 </li>
 </ul>
